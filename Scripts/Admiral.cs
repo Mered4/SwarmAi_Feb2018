@@ -25,11 +25,14 @@ public class Admiral : MonoBehaviour
     private Vector3 groupBoundary;
 
     public int factionNumber;
+    public bool aiUsableTag;
 
     private delegate float groupFormation(float x, float z, float t);
     private delegate float squad();
     private squad[] squads;
     private static List<int> freq = new List<int>();
+    private static List<int> latestStatus = new List<int>();
+    private static List<int> prevStatus = new List<int>();
     
     [Range(0, 2)]
     public int evasive = 0;
@@ -48,11 +51,12 @@ public class Admiral : MonoBehaviour
     private void CreateFleet()
     {
         //Look for nearby (quantitize) AI-tagged objects of the same faction
-        //Assign all ships to a temporary array, sorted by size/weight/speed, largest to smallest
+        //Assign all ships to a temporary array/list, sorted by size/weight/speed, largest to smallest
         //1 RedLeader per multiple of 5 if less then 45 ships.  1 RedLeader per multiple of 10 if greater than 46
         //Assign frequencies to RedLeaders.  Assign ships per previous conditions to each RedLeader
         //initialize RedLeaders to form basic static formation around mothership
         //Assign initial Fleet Strength values for later use
+        ReportFleetStatus();
         //If there are only 1-2 other ships, assign 1 RedLeader to the mothership and initialize Individual.Dog() protocol
     }
 
@@ -69,8 +73,8 @@ public class Admiral : MonoBehaviour
         {
             //set f to frequency 1f
             f = 1;
-            //store it in the array
-            freq.Insert(0, 1);
+            //store it in the list
+            freq.Insert(0, f);
             return f;
         }
         else
@@ -80,7 +84,7 @@ public class Admiral : MonoBehaviour
             {
                 //set f to a new frequency
                 f = freq.Count;
-                //store it in the array
+                //store it in the list
                 freq.Add(f);
                 return f;
             }
@@ -91,7 +95,7 @@ public class Admiral : MonoBehaviour
         }
     }
 
-    //simply removes the frequency from the array.  The Remove() function is built to handle values outside of the array.
+    //simply removes the frequency from the list.  The Remove() function is built to handle values outside of the list
     private void RemoveFrequency(int f)
     {
             //delete frequency
@@ -100,7 +104,18 @@ public class Admiral : MonoBehaviour
 
     private void ReportFleetStatus()
     {
-        //checks arrays for # of Red Leaders, then asks red leaders to report in
+        //checks lists for # of Red Leaders, then asks red leaders to report in
+        //first compare latestStatus to prevStatus, determine the change in fleet strength over time.  Save seperately.
+        //Then clear prevStatus, copy latestStatus to it, then clear latestStatus
+        prevStatus.clear();
+        prevStatus.AddRange(latestStatus);
+        latestStatus.Clear();
+        //for each attached RedLeader, request an update and store in latestStatus
+        freq.ForEach(delegate(int f)
+        {
+            latestStatus.Add(RedLeader.GetSquadStatus(f));
+        });
+        //compare latestStatus to prevStatus, determine the change in fleet strength over time.  Save seperately.
     }
 
     private System.Collections.IEnumerator Passive()

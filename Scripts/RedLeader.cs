@@ -42,16 +42,19 @@ public class RedLeader : MonoBehaviour
 
     private bool GetAdmiral()
     {
-        //checks for an admiral
-        //returns false for no admiral
-        //returns true for an active admiral
-        return false; 
+        if (frequency == -1)
+        {
+            return false;
+        }
+        return true; 
     }
 
-    private void GetSquadStatus()
+    public int GetSquadStatus(int f)
     {
+        int status = 000000000;
         //queries the drones for their individual status
         //compiles information and forwards it to the Admiral, if there is one
+        return status;
     }
     private int Gather()
     {
