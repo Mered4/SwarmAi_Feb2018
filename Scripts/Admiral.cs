@@ -14,6 +14,8 @@ public class Admiral : MonoBehaviour
     //What controls the Admiral?
     //How does it select targets?
 
+    //AI ships will be under the assumptions of the Dark Forest theory of Cosmic Sociology.  Thus, their primary goal is long term survival.
+
     //AI controlled ships will have a specific tag/marker associated with them, that tells the scripts to grab them and use them.
     //They will also contain a faction tag to use for IFF and fleet organization purposes.
 
